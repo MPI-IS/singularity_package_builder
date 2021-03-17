@@ -14,6 +14,18 @@ or
     make tar
 
 
+## Requirements
+
+For the general build dependencies of Singularity, please see the Singularity
+documentation.  Note that you don't need to provide Go, this is handled by this
+Makefile.
+
+Additional requirements by this Makefile are:
+
+- wget
+- dpkg-deb
+
+
 ## Building a specific version
 
 To build a different version than the default, set the `SINGULARITY_VERSION`
