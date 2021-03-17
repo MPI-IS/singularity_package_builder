@@ -1,0 +1,5 @@
+Package: singularity-container
+Version: %VERSION%
+Architecture: amd64
+Description: container platform focused on supporting "Mobility of Compute"
+Maintainer: Felix Widmaier <felix.widmaier@tue.mpg.de>
