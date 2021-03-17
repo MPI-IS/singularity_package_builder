@@ -7,14 +7,20 @@ PKG_NAME=singularity-container_${SINGULARITY_VERSION}-${PKG_VERSION}
 GO_TAR_FILE=go${GO_VERSION}.linux-amd64.tar.gz
 SINGULARITY_TAR_FILE=singularity-${SINGULARITY_VERSION}.tar.gz
 
-go:
-	wget "https://dl.google.com/go/${GO_TAR_FILE}"
-	tar -xzf "${GO_TAR_FILE}"
+ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+BUILD_DIR=${ROOT_DIR}/build
+
+build_folder:
+	mkdir -p ${BUILD_DIR}
+
+go: build_folder
+	cd ${BUILD_DIR}; wget "https://dl.google.com/go/${GO_TAR_FILE}"
+	cd ${BUILD_DIR}; tar -xzf "${GO_TAR_FILE}"
 
 
 singularity: go
-	wget "https://github.com/sylabs/singularity/releases/download/v${SINGULARITY_VERSION}/${SINGULARITY_TAR_FILE}"
-	tar -xzf "${SINGULARITY_TAR_FILE}"
+	cd ${BUILD_DIR}; wget "https://github.com/sylabs/singularity/releases/download/v${SINGULARITY_VERSION}/${SINGULARITY_TAR_FILE}"
+	cd ${BUILD_DIR}; tar -xzf "${SINGULARITY_TAR_FILE}"
 
 	# This is a hack to enable building singularity in the subdirectory of a git
 	# repository.  In their current build script, they first go up the file
@@ -24,29 +30,29 @@ singularity: go
 	# build is happening in a subdirectory of a git repo, this breaks the
 	# build...  As a workaround, copy the VERSION file to the root of the
 	# repository.
-	cp singularity/VERSION .
+	cp ${BUILD_DIR}/singularity/VERSION ${BUILD_DIR}
 
-	export PATH=$$(pwd)/go/bin:$$PATH; cd singularity; ./mconfig
-	export PATH=$$(pwd)/go/bin:$$PATH; cd singularity/builddir; make
+	export PATH=${BUILD_DIR}/go/bin:$$PATH; cd ${BUILD_DIR}/singularity; ./mconfig
+	export PATH=${BUILD_DIR}/go/bin:$$PATH; cd ${BUILD_DIR}/singularity/builddir; make
 
 	# sudo is needed to ensure correct file permissions
-	cd singularity/builddir; sudo make install DESTDIR="../../${PKG_NAME}"
+	cd ${BUILD_DIR}/singularity/builddir; sudo make install DESTDIR="${BUILD_DIR}/${PKG_NAME}"
 
 .PHONY: tar
 tar: singularity
-	tar --xz -cf ${PKG_NAME}.tar.xz -C ${PKG_NAME} usr/
+	cd ${BUILD_DIR}; tar --xz -cf ${PKG_NAME}.tar.xz -C ${PKG_NAME} usr/
 
 .PHONY: deb
 deb: singularity
+	
 	# need sudo because the "PKG_NAME" directory is owned by root
-	sudo mkdir -p "${PKG_NAME}/DEBIAN"
-	sudo cp tmpl/DEBIAN_control "${PKG_NAME}/DEBIAN/control"
-	sudo sed -i "s/%VERSION%/${SINGULARITY_VERSION}-${PKG_VERSION}/" "${PKG_NAME}/DEBIAN/control"
+	cd ${BUILD_DIR}; sudo mkdir -p "${PKG_NAME}/DEBIAN"
+	sudo cp ${ROOT_DIR}/tmpl/DEBIAN_control "${BUILD_DIR}/${PKG_NAME}/DEBIAN/control"
+	sudo sed -i "s/%VERSION%/${SINGULARITY_VERSION}-${PKG_VERSION}/" "${BUILD_DIR}/${PKG_NAME}/DEBIAN/control"
 
-	dpkg-deb --build ${PKG_NAME}
+	cd ${BUILD_DIR};dpkg-deb --build ${PKG_NAME}
 
 
 .PHONY: clean
 clean:
-	rm -f "${GO_TAR_FILE}" "${SINGULARITY_TAR_FILE}" VERSION
-	rm -rf go singularity "${PKG_NAME}"
+	rm -rf ${BUILD_DIR}
