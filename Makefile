@@ -10,15 +10,17 @@ SINGULARITY_TAR_FILE=singularity-${SINGULARITY_VERSION}.tar.gz
 ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 BUILD_DIR=${ROOT_DIR}/build
 
-build_folder:
+
+${BUILD_DIR}:
 	mkdir -p ${BUILD_DIR}
 
-go: build_folder
+
+${BUILD_DIR}/go: | ${BUILD_DIR}
 	cd ${BUILD_DIR}; wget "https://dl.google.com/go/${GO_TAR_FILE}"
 	cd ${BUILD_DIR}; tar -xzf "${GO_TAR_FILE}"
 
 
-singularity: go
+${BUILD_DIR}/singularity: ${BUILD_DIR}/go
 	cd ${BUILD_DIR}; wget "https://github.com/sylabs/singularity/releases/download/v${SINGULARITY_VERSION}/${SINGULARITY_TAR_FILE}"
 	cd ${BUILD_DIR}; tar -xzf "${SINGULARITY_TAR_FILE}"
 
@@ -38,12 +40,14 @@ singularity: go
 	# sudo is needed to ensure correct file permissions
 	cd ${BUILD_DIR}/singularity/builddir; sudo make install DESTDIR="${BUILD_DIR}/${PKG_NAME}"
 
+
 .PHONY: tar
-tar: singularity
+tar: ${BUILD_DIR}/singularity
 	cd ${BUILD_DIR}; tar --xz -cf ${PKG_NAME}.tar.xz -C ${PKG_NAME} usr/
 
+
 .PHONY: deb
-deb: singularity
+deb: ${BUILD_DIR}/singularity
 	
 	# need sudo because the "PKG_NAME" directory is owned by root
 	cd ${BUILD_DIR}; sudo mkdir -p "${PKG_NAME}/DEBIAN"
