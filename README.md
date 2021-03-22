@@ -13,6 +13,7 @@ or
 
     make tar
 
+The generated files will be located in the build folder.
 
 ## Requirements
 
