@@ -3,6 +3,7 @@ SINGULARITY_VERSION=3.7.1
 GO_VERSION=1.13
 PKG_VERSION=1
 PKG_NAME=singularity-container_${SINGULARITY_VERSION}-${PKG_VERSION}
+MAINTAINER=Anonymous <anon@example.com>
 
 GO_TAR_FILE=go${GO_VERSION}.linux-amd64.tar.gz
 SINGULARITY_TAR_FILE=singularity-${SINGULARITY_VERSION}.tar.gz
@@ -47,14 +48,15 @@ tar: ${BUILD_DIR}/singularity
 
 
 .PHONY: deb
+deb: TARGET_CONTROL_FILE = "${BUILD_DIR}/${PKG_NAME}/DEBIAN/control"
 deb: ${BUILD_DIR}/singularity
-	
 	# need sudo because the "PKG_NAME" directory is owned by root
 	cd ${BUILD_DIR}; sudo mkdir -p "${PKG_NAME}/DEBIAN"
-	sudo cp ${ROOT_DIR}/tmpl/DEBIAN_control "${BUILD_DIR}/${PKG_NAME}/DEBIAN/control"
-	sudo sed -i "s/%VERSION%/${SINGULARITY_VERSION}-${PKG_VERSION}/" "${BUILD_DIR}/${PKG_NAME}/DEBIAN/control"
+	sudo cp ${ROOT_DIR}/tmpl/DEBIAN_control "${TARGET_CONTROL_FILE}"
+	sudo sed -i "s/%VERSION%/${SINGULARITY_VERSION}-${PKG_VERSION}/" "${TARGET_CONTROL_FILE}"
+	sudo sed -i "s/%MAINTAINER%/${MAINTAINER}/" "${TARGET_CONTROL_FILE}"
 
-	cd ${BUILD_DIR};dpkg-deb --build ${PKG_NAME}
+	cd ${BUILD_DIR}; dpkg-deb --build ${PKG_NAME}
 
 
 .PHONY: clean
