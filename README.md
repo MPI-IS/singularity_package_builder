@@ -7,11 +7,15 @@ for installing it.
 
 To build, simply call
 
-    make deb
+    make tar
 
 or
 
-    make tar
+    make deb
+
+To specify the maintainer of the generated deb use
+
+    make deb MAINTAINER="Bob <bob@example.com>"
 
 The generated files will be located in the build folder.
 
