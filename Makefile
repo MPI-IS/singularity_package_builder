@@ -1,5 +1,5 @@
 
-SINGULARITY_VERSION=3.7.1
+SINGULARITY_VERSION=3.7.3
 GO_VERSION=1.13
 PKG_VERSION=1
 PKG_NAME=singularity-container_${SINGULARITY_VERSION}-${PKG_VERSION}
@@ -22,7 +22,7 @@ ${BUILD_DIR}/go: | ${BUILD_DIR}
 
 
 ${BUILD_DIR}/singularity: ${BUILD_DIR}/go
-	cd ${BUILD_DIR}; wget "https://github.com/sylabs/singularity/releases/download/v${SINGULARITY_VERSION}/${SINGULARITY_TAR_FILE}"
+	cd ${BUILD_DIR}; wget "https://github.com/hpcng/singularity/releases/download/v${SINGULARITY_VERSION}/${SINGULARITY_TAR_FILE}"
 	cd ${BUILD_DIR}; tar -xzf "${SINGULARITY_TAR_FILE}"
 
 	# This is a hack to enable building singularity in the subdirectory of a git
