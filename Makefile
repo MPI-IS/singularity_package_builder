@@ -21,8 +21,11 @@ ${BUILD_DIR}/go: | ${BUILD_DIR}
 	cd ${BUILD_DIR}; tar -xzf "${GO_TAR_FILE}"
 
 
-${BUILD_DIR}/singularity: ${BUILD_DIR}/go
+${BUILD_DIR}/${SINGULARITY_TAR_FILE}:
 	cd ${BUILD_DIR}; wget "https://github.com/hpcng/singularity/releases/download/v${SINGULARITY_VERSION}/${SINGULARITY_TAR_FILE}"
+
+
+${BUILD_DIR}/singularity: ${BUILD_DIR}/go ${BUILD_DIR}/${SINGULARITY_TAR_FILE}
 	cd ${BUILD_DIR}; tar -xzf "${SINGULARITY_TAR_FILE}"
 
 	# This is a hack to enable building singularity in the subdirectory of a git
