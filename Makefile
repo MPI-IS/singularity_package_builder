@@ -36,7 +36,7 @@ ${BUILD_DIR}/singularity: ${BUILD_DIR}/go ${BUILD_DIR}/${SINGULARITY_TAR_FILE}
 	# build is happening in a subdirectory of a git repo, this breaks the
 	# build...  As a workaround, copy the VERSION file to the root of the
 	# repository.
-	cp ${BUILD_DIR}/singularity/VERSION ${BUILD_DIR}
+	cp ${BUILD_DIR}/singularity/VERSION ${PWD}
 
 	export PATH=${BUILD_DIR}/go/bin:$$PATH; cd ${BUILD_DIR}/singularity; ./mconfig
 	export PATH=${BUILD_DIR}/go/bin:$$PATH; cd ${BUILD_DIR}/singularity/builddir; make
@@ -65,3 +65,4 @@ deb: ${BUILD_DIR}/singularity
 .PHONY: clean
 clean:
 	rm -rf ${BUILD_DIR}
+	rm -f VERSION
