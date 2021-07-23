@@ -1,6 +1,6 @@
 
-SINGULARITY_VERSION=3.7.3
-GO_VERSION=1.13
+SINGULARITY_VERSION=3.7.4
+GO_VERSION=1.15.8
 PKG_VERSION=1
 PKG_NAME=singularity-container_${SINGULARITY_VERSION}-${PKG_VERSION}
 MAINTAINER=Anonymous <anon@example.com>
@@ -21,8 +21,11 @@ ${BUILD_DIR}/go: | ${BUILD_DIR}
 	cd ${BUILD_DIR}; tar -xzf "${GO_TAR_FILE}"
 
 
-${BUILD_DIR}/singularity: ${BUILD_DIR}/go
+${BUILD_DIR}/${SINGULARITY_TAR_FILE}:
 	cd ${BUILD_DIR}; wget "https://github.com/hpcng/singularity/releases/download/v${SINGULARITY_VERSION}/${SINGULARITY_TAR_FILE}"
+
+
+${BUILD_DIR}/singularity: ${BUILD_DIR}/go ${BUILD_DIR}/${SINGULARITY_TAR_FILE}
 	cd ${BUILD_DIR}; tar -xzf "${SINGULARITY_TAR_FILE}"
 
 	# This is a hack to enable building singularity in the subdirectory of a git
@@ -33,7 +36,7 @@ ${BUILD_DIR}/singularity: ${BUILD_DIR}/go
 	# build is happening in a subdirectory of a git repo, this breaks the
 	# build...  As a workaround, copy the VERSION file to the root of the
 	# repository.
-	cp ${BUILD_DIR}/singularity/VERSION ${BUILD_DIR}
+	cp ${BUILD_DIR}/singularity/VERSION ${PWD}
 
 	export PATH=${BUILD_DIR}/go/bin:$$PATH; cd ${BUILD_DIR}/singularity; ./mconfig
 	export PATH=${BUILD_DIR}/go/bin:$$PATH; cd ${BUILD_DIR}/singularity/builddir; make
@@ -62,3 +65,4 @@ deb: ${BUILD_DIR}/singularity
 .PHONY: clean
 clean:
 	rm -rf ${BUILD_DIR}
+	rm -f VERSION
