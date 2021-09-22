@@ -26,7 +26,10 @@ ${BUILD_DIR}/${SINGULARITY_TAR_FILE}:
 
 
 ${BUILD_DIR}/singularity: ${BUILD_DIR}/go ${BUILD_DIR}/${SINGULARITY_TAR_FILE}
-	cd ${BUILD_DIR}; tar -xzf "${SINGULARITY_TAR_FILE}"
+	# Explicitly extract the tar into a folder "singularity".  This was the
+	# default in the past but in recent versions the default is
+	# "singularity-VERSION".  The following method should work for both cases.
+	cd ${BUILD_DIR}; mkdir singularity; tar -xzf "${SINGULARITY_TAR_FILE}" -C singularity --strip-components=1
 
 	# This is a hack to enable building singularity in the subdirectory of a git
 	# repository.  In their current build script, they first go up the file
