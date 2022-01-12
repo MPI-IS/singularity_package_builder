@@ -22,7 +22,7 @@ ${BUILD_DIR}/go: | ${BUILD_DIR}
 
 
 ${BUILD_DIR}/${SINGULARITY_TAR_FILE}:
-	cd ${BUILD_DIR}; wget "https://github.com/hpcng/singularity/releases/download/v${SINGULARITY_VERSION}/${SINGULARITY_TAR_FILE}"
+	cd ${BUILD_DIR}; wget "https://github.com/apptainer/singularity/releases/download/v${SINGULARITY_VERSION}/${SINGULARITY_TAR_FILE}"
 
 
 ${BUILD_DIR}/singularity: ${BUILD_DIR}/go ${BUILD_DIR}/${SINGULARITY_TAR_FILE}
