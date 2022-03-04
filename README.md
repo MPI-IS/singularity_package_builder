@@ -3,12 +3,12 @@ Singularity Package Builder
 
 **IMPORTANT: Apptainer provides official DEB packages now!**
 
-Since the rebranding of Singularity to *Apptainer*, there are now official DEB
-packages provided for the releases on the corresponding [GitHub
-repository](https://github.com/apptainer/apptainer).
-Due to this, there is no need to build DEB packages manually anymore, rendering
-this package builder obsolete.  You may still use it for older versions of
-Singularity but it will not be updated for new releases anymore.
+Since the rebranding of Singularity to [Apptainer](https://apptainer.org), there
+are now official DEB packages provided for the releases on the corresponding
+[GitHub repository](https://github.com/apptainer/apptainer). Due to this, there
+is no need to build DEB packages manually anymore, rendering this package
+builder obsolete.  You may still use it for older versions of Singularity but it
+will not be updated for new releases anymore.
 
 
 ## Overview
